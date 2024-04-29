@@ -1,0 +1,16 @@
+These files were taken from Matlab's Train Variational Autoencoder (VAE) to Generate Images example:
+
+samplingLayer.m
+projectAndReshape.m
+processLabelsMNIST.m
+processImagesMNIST.m
+initializeZeros.m
+initializeGlorot.m
+modelLoss.m
+elboLoss.m
+modelPredictions.m
+preprocessMiniBatch.m
+
+These files were taken from Matlab's Train Object Detector Using R-CNN Deep Learning example:
+
+helperCIFAR10Data.m
