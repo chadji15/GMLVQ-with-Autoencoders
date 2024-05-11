@@ -3,14 +3,14 @@ clear;
 
 %% Settings
 
-settings.modelPath = "models/CAE22_FashionMNIST.mat";
+model = "FCAE_tanh_FashionMNIST.mat";
+settings.modelPath = "models/" + model;
 settings.dataset = "FashionMNIST";
 settings.doztr = true;
-settings.totalSteps = 30;
-settings.runs = 10;
-settings.percentage = 10;
-settings.savePath = "models/GMLVQ_CAE22_FashionMNIST.mat";
-settings.cifar10 = true;
+settings.totalSteps = 10;
+settings.runs = 1;
+settings.percentage = 10; %for validation
+settings.savePath = "models/GMLVQ_" + model;
 %%
 load(settings.modelPath);
 if ~exist('autoenc','var')

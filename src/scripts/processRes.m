@@ -7,7 +7,7 @@ end
 %% Calculate accuracy
 
 disp("Accuracy")
-cmatrix = result.averageRun.validationPerf.confusionMatrix;
+cmatrix = result.averageRun.validationPerf(end).confusionMatrix;
 accuracy = sum(diag(cmatrix)) / sum(cmatrix,"all")
 
 % decode the prototypes
@@ -32,21 +32,30 @@ end
 %% Plot eigenvectors
 rel = result.averageRun.lambda;
 Z = diag(result.averageRun.stdFeatures);
+rel_inv = Z;
+if settings.doztr
 rel_inv = Z.' * rel * Z;
+end
 [V, D] = eig(rel_inv,'vector');
 
-[m,idx] = max(D);
-primEig = V(:,idx);
-primEigIm = autoenc.decode(transpose(primEig));
-imshow(primEigIm);
+% [m,idx] = max(D);
+% primEig = V(:,idx);
+% primEigIm = autoenc.decode(transpose(primEig));
+% subplot(1,2,1);
+% imshow(primEigIm);
+% 
+% primEig = V(:,end-idx);
+% primEigIm = autoenc.decode(transpose(primEig));
+% subplot(1,2,2);
+% imshow(primEigIm);
 
-% num = 32;
-% figure;
-% for i=1:num
-%     dec = autoenc.decode(transpose(V(:,i)));
-%     %im = rescale(dec);
-%     im=dec;
-%     subplot(1,num,i);
-%     imshow(im);
-% end
+num = 10;
+figure;
+for i=1:num
+    dec = autoenc.decode(transpose(V(:,i)));
+    %im = rescale(dec);
+    im=dec;
+    subplot(2,5,i);
+    imshow(im,[]);
+end
 

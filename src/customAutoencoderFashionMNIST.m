@@ -12,9 +12,9 @@ montage(thumbnails,'size',[20 50])
 
 %% Train autoencoder
 
-hiddenSize = 32;
+hiddenSize = 10;
 
-autoenc = CustomAutoencoder22(hiddenSize, trainingImages);
+autoenc = FCAE(hiddenSize, trainingImages,20,"sigmoid");
 
 %% Test set
 mse = autoenc.test(testImages)
@@ -24,4 +24,4 @@ mse = autoenc.test(testImages)
 YNew = autoenc.generateNew();
 
 %% Save
-save("models/CAE22_FashionMNIST.mat", "autoenc");
+save("models/FCAE_sigmoid_FashionMNIST.mat", "autoenc");
