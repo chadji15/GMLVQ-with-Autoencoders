@@ -18,8 +18,10 @@ auroc = [];
 primEigIm = [];
 mse = [];
 
-for hiddenSize=2:3
-    autoenc = FCAE(hiddenSize, trainingImages,20,settings.activation, "none");
+for hiddenSize=5:125
+    autoenc = FCAE(trainingImages,hiddenSize,50, ...
+        'activation',settings.activation, ...
+        "plots", "none");
 
     mse(hiddenSize) = autoenc.test(testImages,false);
 

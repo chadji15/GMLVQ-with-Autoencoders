@@ -1,5 +1,5 @@
 classdef FCAE
-% Only works for 28x28 images
+% Only works for 28x28 and 32x32 images
     properties
         net
         encoderLayer
@@ -8,16 +8,34 @@ classdef FCAE
     end
     
     methods
-        function obj = FCAE(hiddenSize,images, maxEpochs, activation, plots)
-           if ~exist('maxEpochs','var')
-              maxEpochs=20;
-           end
-           if ~exist('activation','var')
-              activation="sigmoid";
-           end
-           if ~exist('plots','var')
-              plots="training-progress";
-           end
+        %function obj = FCAE(hiddenSize,images, maxEpochs, activation, plots)
+        function obj = FCAE(images,hiddenSize,varargin)
+
+            defaultMaxEpochs = 10;
+            defaultActivation = "sigmoid";
+            expectedActivation = {"sigmoid", "tanh"};
+            defaultPlots = "training-progress";
+            expectedPlots = {"training-progress", "none"};
+            defaultLearnRate = 1e-3;
+    
+            p = inputParser;
+            validScalarPosNum = @(x) isnumeric(x) && isscalar(x) && (x > 0);
+            addRequired(p,'images');
+            addRequired(p,"hiddenSize", validScalarPosNum);
+            addOptional(p,"maxEpochs", defaultMaxEpochs, validScalarPosNum);
+            addParameter(p,"activation",defaultActivation, ...
+                @(x) any(validatestring(x,expectedActivation)))
+            addParameter(p,"plots",defaultPlots, ...
+                @(x) any(validatestring(x,expectedPlots)))
+            addParameter(p,"learnRate",defaultLearnRate);
+    
+            parse(p,images, hiddenSize,varargin{:});
+
+            maxEpochs = p.Results.maxEpochs;
+            activation = p.Results.activation;
+            plots = p.Results.plots;
+            learnRate = p.Results.learnRate;
+          
            sz = size(images);
            imageSize = sz(1:3);
            activationLayer = sigmoidLayer;
@@ -30,6 +48,10 @@ classdef FCAE
            if activation == "tanh"
                activationLayer = tanhLayer;
            end
+           fistConvPadding = [0 0];
+           if imageSize(1) == 32
+               fistConvPadding = "same";
+           end
            % autoencoder layers
            layers = [ 
                 inputLayer % 28x28x1
@@ -41,7 +63,7 @@ classdef FCAE
                 convolution2dLayer(4, hiddenSize, "Stride",1) % 1x1xhiddenSize
                 transposedConv2dLayer(4, 32, "stride", 1) % 4x4x32
                 transposedConv2dLayer(3,32,"Stride",2,"Cropping","same") % 8x8x32
-                convolution2dLayer(2,16,"Stride",1) % 7x7x716
+                convolution2dLayer(2,16,"Stride",1, "Padding",fistConvPadding) % 7x7x16 
                 transposedConv2dLayer(3, 16, "stride", 2, "Cropping","same") % 14x14x16
                 convolution2dLayer(3,8,"Stride",1,"Padding","same") % 14x14x8
                 transposedConv2dLayer(3, imageSize(3), "stride", 2,"Cropping","same") % 28x28x1
@@ -53,7 +75,7 @@ classdef FCAE
             % training hyperparameters
             options = trainingOptions('adam', ...
                 'MaxEpochs',maxEpochs,...
-                'InitialLearnRate',1e-3, ...
+                'InitialLearnRate',learnRate, ...
                 'Verbose',false, ...
                 'Plots',plots,...
                 'MiniBatchSize',128);
@@ -87,7 +109,7 @@ classdef FCAE
         function output = decode(obj, features)
             features = reshape(transpose(features), 1, 1,obj.hiddenSize,[]);
             output = obj.decoder.predict(features);
-            % if obj.net.Layers(end-1).Type == "Tanh"
+            % if obj.net.Layers(end-1).Type == "tanh"
             %     output = rescale(output);
             % end
         end

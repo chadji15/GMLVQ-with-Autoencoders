@@ -1,17 +1,4 @@
-clc;
-clear;
-
-%% Settings
-
-model = "FCAE_CIFAR10.mat";
-settings.modelPath = "models/" + model;
-settings.dataset = "CIFAR10";
-settings.doztr = true;
-settings.totalSteps = 20;
-settings.runs = 1;
-settings.percentage = 10; %for validation
-settings.savePath = "models/GMLVQ_" + model;
-%%
+%% After loading GMLVQ + Autoenc model
 load(settings.modelPath);
 if ~exist('autoenc','var')
     autoenc = mVAE;
@@ -29,23 +16,7 @@ else
 return
 end
 
-%%
-% encode the training data
-xencoded = autoenc.encode(trainingImages);
-if size(xencoded,1) < size(xencoded, 2)
-    xencoded = transpose(xencoded);
-end
-
-% convert the labels to the range 1-N
-lt = LabelTransformer(unique(trainingLabels));
-transformedLabels = lt.transform(trainingLabels);
-
-% train the gmlvq model
-gmlvq = GMLVQ.GMLVQ(xencoded, transformedLabels,GMLVQ.Parameters("doztr", settings.doztr), settings.totalSteps);
-
-result = gmlvq.runValidation(settings.runs,settings.percentage);
-
-% decode the prototypes
+%% decode the prototypes
 nPrototypes = size(result.averageRun.prototypes,1);
 prototypes = result.averageRun.prototypes;
 
@@ -60,10 +31,16 @@ end
 classes = keys(lt.labelMap);
 origPrototypes = autoenc.decode(prototypes);
 for i = 1:length(classes)
-    subplot(1,length(classes),i);
-    imshow(squeeze(origPrototypes(:,:,:,i)), []);
+    subplot(2,length(classes),i);
+    imshow(squeeze(origPrototypes(:,:,:,i)));
 end
 
-%% Save 
+%% Calculate pixel-wise average
 
-save(settings.savePath, "result", "gmlvq", "prototypes", "lt", "settings")
+idx = trainingLabels == trainingLabels(1);
+subplot(2,length(classes),3);
+imgAvg1 = mean(trainingImages(:,:,:,idx),4);
+imshow(imgAvg1);
+subplot(2,length(classes),4);
+imgAvg2 = mean(trainingImages(:,:,:,~idx),4);
+imshow(imgAvg2);

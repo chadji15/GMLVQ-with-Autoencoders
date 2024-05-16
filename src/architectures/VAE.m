@@ -5,16 +5,16 @@ classdef VAE
     properties
         netE
         netD
-        numLatentChannels
+        hiddenSize
     end
     
     methods
-        function obj = VAE(netE, netD, numLatentChannels)
+        function obj = VAE(netE, netD, hiddenSize)
             %VAE Construct an instance of this class
             %   Detailed explanation goes here
             obj.netE = netE;
             obj.netD = netD;
-            obj.numLatentChannels = numLatentChannels;
+            obj.hiddenSize = hiddenSize;
         end
         
         function Y = encode(obj,images)
@@ -115,7 +115,7 @@ classdef VAE
         function YNew = generateNew(obj)
             numImages = 64;
 
-            ZNew = randn(obj.numLatentChannels,numImages);
+            ZNew = randn(obj.hiddenSize,numImages);
             ZNew = dlarray(ZNew,"CB");
             
             YNew = predict(obj.netD,ZNew);
@@ -130,15 +130,29 @@ classdef VAE
 
     methods (Static)
         % Static methods acting as "constructor overloads"
-        function obj = trainVAE(numLatentChannels,trainingImages, numEpochs, learnRate)
-            %VAE Construct an instance of this class
-            %   Detailed explanation goes here
-            if ~exist('numEpochs','var')
-              numEpochs=20;
-            end
-            if ~exist('learnRate','var')
-              learnRate=1e-3;
-            end
+        %function obj = trainVAE(hiddenSize,trainingImages, maxEpochs, learnRate)
+        function obj = trainVAE(trainingImages, hiddenSize, varargin)
+            defaultMaxEpochs = 10;
+            defaultPlots = "training-progress";
+            expectedPlots = {"training-progress", "none"};
+            defaultLearnRate = 1e-3;
+    
+            p = inputParser;
+            validScalarPosNum = @(x) isnumeric(x) && isscalar(x) && (x > 0);
+            addRequired(p,'images');
+            addRequired(p,"hiddenSize", validScalarPosNum);
+            addOptional(p,"maxEpochs", defaultMaxEpochs, validScalarPosNum);
+            addParameter(p,"activation",defaultActivation, ...
+                @(x) any(validatestring(x,expectedActivation)))
+            addParameter(p,"plots",defaultPlots, ...
+                @(x) any(validatestring(x,expectedPlots)))
+            addParameter(p,"learnRate",defaultLearnRate);
+    
+            parse(p,images, hiddenSize,varargin{:});
+
+            maxEpochs = p.Results.maxEpochs;
+            plots = p.Results.plots;
+            learnRate = p.Results.learnRate;
         
             sz = size(trainingImages);
             imageSize = sz(1:3);
@@ -150,7 +164,7 @@ classdef VAE
                 reluLayer
                 convolution2dLayer(3,64,Padding="same",Stride=2)% 14x14x32 => 7x7x64
                 reluLayer
-                fullyConnectedLayer(2*numLatentChannels) % 7x7x64 => 1x64
+                fullyConnectedLayer(2*hiddenSize) % 7x7x64 => 1x64
                 samplingLayer];
             
             projectionSize = [7 7 64];
@@ -164,7 +178,7 @@ classdef VAE
             
             % Decoder layers
             layersD = [
-                featureInputLayer(numLatentChannels)
+                featureInputLayer(hiddenSize)
                 projectAndReshapeLayer(projectionSize)
                 transposedConv2dLayer(3,64,Cropping="same",Stride=2) % 7x7x64 => 14x14x32
                 reluLayer
@@ -197,20 +211,22 @@ classdef VAE
             % Calculate the total number of iterations for the training progress monitor
             numObservationsTrain = size(XTrain,4);
             numIterationsPerEpoch = ceil(numObservationsTrain / miniBatchSize);
-            numIterations = numEpochs * numIterationsPerEpoch;
+            numIterations = maxEpochs * numIterationsPerEpoch;
             
             %Initialize the training progress monitor.
+            if plots == "training-progress"
             monitor = trainingProgressMonitor( ...
                 Metrics="Loss", ...
                 Info="Epoch", ...
                 XLabel="Iteration");
+            end
             
             epoch = 0;
             iteration = 0;
             
             % Custom training loop
             % Loop over epochs.
-            while epoch < numEpochs && ~monitor.Stop
+            while epoch < maxEpochs && ~monitor.Stop
                 epoch = epoch + 1;
             
                 % Shuffle data.
@@ -234,13 +250,15 @@ classdef VAE
                         gradientsD,trailingAvgD,trailingAvgSqD,iteration,learnRate);
             
                     % Update the training progress monitor. 
-                    recordMetrics(monitor,iteration,Loss=loss);
-                    updateInfo(monitor,Epoch=epoch + " of " + numEpochs);
-                    monitor.Progress = 100*iteration/numIterations;
+                    if plots == "training-progress"
+                        recordMetrics(monitor,iteration,Loss=loss);
+                        updateInfo(monitor,Epoch=epoch + " of " + maxEpochs);
+                        monitor.Progress = 100*iteration/numIterations;
+                    end
                 end
             end
 
-            obj = VAE(netE, netD, numLatentChannels);
+            obj = VAE(netE, netD, hiddenSize);
         end
     end
 end

@@ -5,7 +5,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(bw
     [trainingImages,trainingLabels,testImages,testLabels] = helperCIFAR10Data.load('.\data');
     % Select two classes
     
-    classes = categorical(["frog", "truck"]);
+    classes = categorical(["horse", "ship"]);
     
     trainIdx = find(ismember(trainingLabels, classes));
     trainingImages = trainingImages(:,:,:,trainIdx);
