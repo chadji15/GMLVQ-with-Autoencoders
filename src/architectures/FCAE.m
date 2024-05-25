@@ -1,21 +1,35 @@
 classdef FCAE
-% Only works for 28x28 and 32x32 images
+    %FCAE A class for containing a Fully Convolutional Autoencoder.
+    % A fully convolutional autoencoder does not include any fully
+    % connected layer. The architecture for this specific implementation:
+    % Encoder: 6 convolution layers, 3 of which downsize
+    % Decoder: 3 transposed convolution layers for upsampling and
+    %  3 convolution layers that do not affect the output size.
+    % Activation layer: sigmoid or tanh
+    % only works for 28x28x? and 32x32x? images
     properties
-        net
-        encoderLayer
-        decoder
-        hiddenSize
+        net % The network that results after the trainNetwork function is called
+        encoderLayer % The number of the last layer of the encoder
+        decoder % The last few layers of net, composing the decoder
+        hiddenSize % The size of the bottleneck layer
     end
     
     methods
-        %function obj = FCAE(hiddenSize,images, maxEpochs, activation, plots)
         function obj = FCAE(images,hiddenSize,varargin)
+            %FCAE
+            % images: 4-D (S,S,C,B)
+            % hiddenSize: positive integer, size of bottleneck layer
+            % varargin: 
+            %  activation: sigmoid or tanh
+            %  plots: 'training-progress' for visual or 'none'
+            %  learnRate: learning rate
 
+            % argument parsing
             defaultMaxEpochs = 10;
-            defaultActivation = "sigmoid";
-            expectedActivation = {"sigmoid", "tanh"};
-            defaultPlots = "training-progress";
-            expectedPlots = {"training-progress", "none"};
+            defaultActivation = 'sigmoid';
+            expectedActivation = {'sigmoid', 'tanh'};
+            defaultPlots = 'training-progress';
+            expectedPlots = {'training-progress', 'none'};
             defaultLearnRate = 1e-3;
     
             p = inputParser;
@@ -35,12 +49,15 @@ classdef FCAE
             activation = p.Results.activation;
             plots = p.Results.plots;
             learnRate = p.Results.learnRate;
+
+            % End of argument parsing.
           
            sz = size(images);
            imageSize = sz(1:3);
            activationLayer = sigmoidLayer;
            inputLayer = imageInputLayer(imageSize, "Normalization","none");
            ytrain = images;
+           % remove this in next iteration
            if activation == "tanh"
                inputLayer = imageInputLayer(imageSize, "Normalization","rescale-symmetric");
                %ytrain = rescale(ytrain,-1,1);
@@ -48,10 +65,12 @@ classdef FCAE
            if activation == "tanh"
                activationLayer = tanhLayer;
            end
+           % this part takes care of the 28x28 vs 32x32 compatibility
            fistConvPadding = [0 0];
            if imageSize(1) == 32
                fistConvPadding = "same";
            end
+           %
            % autoencoder layers
            layers = [ 
                 inputLayer % 28x28x1
@@ -115,6 +134,11 @@ classdef FCAE
         end
 
         function [mmse, YTest] = test(obj,testImages, vis)
+            %test Evaluate the autoencoder on the test set
+            % Shows some of the images and their reconstructions (if vis is
+            % true)
+            % Returns mse
+            % 
             if ~exist('vis','var')
               vis=true;
             end
@@ -148,6 +172,7 @@ classdef FCAE
         end
     
         function YNew = generateNew(obj)
+            %generateNew Generate new images from noise
             numImages = 64;
             numLatentChannels = obj.hiddenSize;
             

@@ -33,6 +33,7 @@ origPrototypes = autoenc.decode(prototypes);
 for i = 1:length(classes)
     subplot(2,length(classes),i);
     imshow(squeeze(origPrototypes(:,:,:,i)));
+    title("Prototype")
 end
 
 %% Calculate pixel-wise average
@@ -41,6 +42,8 @@ idx = trainingLabels == trainingLabels(1);
 subplot(2,length(classes),3);
 imgAvg1 = mean(trainingImages(:,:,:,idx),4);
 imshow(imgAvg1);
+title("Pixel-wise average")
 subplot(2,length(classes),4);
 imgAvg2 = mean(trainingImages(:,:,:,~idx),4);
 imshow(imgAvg2);
+title("Pixel-wise average")

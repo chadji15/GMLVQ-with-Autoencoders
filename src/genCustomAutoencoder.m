@@ -3,9 +3,9 @@ clear;
 addpath(genpath(pwd));
 %% Settings
 
-settings.hiddenSize = 5;
-settings.numEpochs = 20;
-settings.dataset = "FashionMNIST";
+settings.hiddenSize = 256;
+settings.numEpochs = 100;
+settings.dataset = "CIFAR10";
 settings.savePath = "models/CAE_"+ settings.dataset + ".mat";
 settings.activation = "sigmoid";
 settings.learnRate = 1e-3;

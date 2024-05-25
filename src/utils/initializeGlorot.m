@@ -1,5 +1,5 @@
 function weights = initializeGlorot(sz,numOut,numIn,className)
-
+%initializeGlorot Glorot weight initializer for deep learning toolbox
 arguments
     sz
     numOut

@@ -1,4 +1,9 @@
 function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(bw)
+%loadCIFAR Load the CIFAR10 dataset from the .mat files and splits it into
+% training and test sets. For now we keep the classes "horse" and "ship". 
+% If the parameter "bw" is true, the images are turned into grayscale
+% before returning them.
+% 
     if ~exist("bw", "var")
         bw = false;
     end
@@ -15,6 +20,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(bw
     testImages = testImages(:,:,:,testIdx);
     testLabels = testLabels(testIdx);
 
+    % If bw is true, turn training and test images to grayscale
     if bw
         for c=1:size(trainingImages, 4)
             trainingImagesBW(:,:,:,c) = rgb2gray(trainingImages(:,:,:,c));

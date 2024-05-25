@@ -1,15 +1,29 @@
 classdef CustomAutoencoder
-    
+    %CustomAutoencoder This class contains the implementation of a
+    %convolutional autoencoder. 
+    % Architecture:
+    %  Encoder: 5 convolution layers, 3 of which downsize
+    %  Fully connected layer acting as bottleneck
+    %  Decoder: 3 transposed convolution layers and 2 convolution layers
+    % Works for 28x28 and 32x32
     properties
-        net
-        encoderLayer
-        decoder
-        hiddenSize
+        net % The network with the trained layers
+        encoderLayer % The number of the last layer of the encoder (the bottleneck layer)
+        decoder % The bottom half of the network, composed into a separate network
+        hiddenSize % The size of the bottleneck layer
     end
     
     methods
-        %function obj = CustomAutoencoder(hiddenSize,images, maxEpochs,activation, plots)
         function obj = CustomAutoencoder(images, hiddenSize, varargin)
+            %CustomAutoencoder
+            % images: 4-D (S,S,C,B)
+            % hiddenSize: Size of the bottleneck layer
+            % varargin: 
+            %  activation: sigmoid or tanh
+            %  plots: 'training-progress' for visual or 'none'
+            %  learnRate: learning rate
+            
+            % argument parsing
             defaultMaxEpochs = 20;
             defaultActivation = 'sigmoid';
             expectedActivation = {'sigmoid', 'tanh'};
@@ -34,7 +48,8 @@ classdef CustomAutoencoder
             activation = p.Results.activation;
             plots = p.Results.plots;
             learnRate = p.Results.learnRate;
-         
+            % End of argument parsing
+
            sz = size(images);
            imageSize = sz(1:3);
            activationLayer = sigmoidLayer;
@@ -47,10 +62,15 @@ classdef CustomAutoencoder
            if activation == "tanh"
                activationLayer = tanhLayer;
            end
+           % This part takes care of compatibility of 28x28 and 32x32
            fistConvPadding = [0 0];
            if imageSize(1) == 32
                fistConvPadding = "same";
            end
+
+           % This is the size of the first set of image-like structures
+           % after the bottleneck layer in order to apply transposed
+           % convolution
            projectionSize = [4 4 32];
 
            layers = [ 

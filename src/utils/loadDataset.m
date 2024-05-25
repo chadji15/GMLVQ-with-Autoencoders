@@ -1,6 +1,5 @@
 function [trainingImages, trainingLabels,testImages,testLabels] = loadDataset(dataset)
-%LOADDATASET Summary of this function goes here
-%   Detailed explanation goes here
+%LOADDATASET Auxiliary function for making the scripts more modular.
     if dataset == "FashionMNIST"
     [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST();
     elseif dataset == "MNIST"

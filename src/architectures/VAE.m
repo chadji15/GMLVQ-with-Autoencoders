@@ -133,8 +133,8 @@ classdef VAE
         %function obj = trainVAE(hiddenSize,trainingImages, maxEpochs, learnRate)
         function obj = trainVAE(trainingImages, hiddenSize, varargin)
             defaultMaxEpochs = 10;
-            defaultPlots = "training-progress";
-            expectedPlots = {"training-progress", "none"};
+            defaultPlots = 'training-progress';
+            expectedPlots = {'training-progress', 'none'};
             defaultLearnRate = 1e-3;
     
             p = inputParser;

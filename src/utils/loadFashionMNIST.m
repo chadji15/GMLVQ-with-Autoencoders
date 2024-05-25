@@ -1,4 +1,7 @@
 function [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST()
+%loadFashionMNIST Loads the FashionMNIST dataset from the binary files and
+% splits it into training and test set. For now we keep the classes "Bag"
+% and "Trouser" but this can become a parameter if need be.
     TrainimageFileName = 'fashionMNIST/train-images-idx3-ubyte';
     TrainlabelFileName = 'fashionMNIST/train-labels-idx1-ubyte';
     TestimageFileName = 'fashionMNIST/t10k-images-idx3-ubyte';
