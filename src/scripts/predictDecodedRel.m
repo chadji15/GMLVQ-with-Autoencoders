@@ -2,7 +2,7 @@ clc;
 clear;
 
 %% load the model
-load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMVLQ_FCAE_tanh_FashionMNIST.mat')
+load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMVLQ_FCAE_tanh_MNIST.mat')
 
 %%
 % reverse z-score transformation from relevance matrix
@@ -51,6 +51,10 @@ class2ProtDec = reshape(squeeze(origPrototypes(:,:,:,2)),1,[]);
 
 [trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset);
 
+% rescale
+if isfield(settings, "rescaleInput") && settings.rescaleInput
+    trainingImages = rescale(trainingImages,-1,1);
+end
 % encode the training data
 xencoded = autoenc.encode(trainingImages);
 encodedFeatures = xencoded;

@@ -2,6 +2,9 @@ function savepath = run_full(settings)
 
 [trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset);
 
+if settings.rescaleInput
+    trainingImages = rescale(trainingImages,-1,1);
+end
 if settings.arch == "CAE"
     autoenc = CustomAutoencoder(trainingImages, ...
         settings.hiddenSize, ...
@@ -45,9 +48,6 @@ if settings.doztr
     
 end
 
-
-classes = keys(lt.labelMap);
-origPrototypes = autoenc.decode(prototypes);
 
 save(settings.savePath, "autoenc", "result", "gmlvq", "prototypes", "lt", "settings")
 savepath = settings.savePath;

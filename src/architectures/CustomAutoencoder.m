@@ -11,6 +11,7 @@ classdef CustomAutoencoder
         encoderLayer % The number of the last layer of the encoder (the bottleneck layer)
         decoder % The bottom half of the network, composed into a separate network
         hiddenSize % The size of the bottleneck layer
+        activation
     end
     
     methods
@@ -56,10 +57,6 @@ classdef CustomAutoencoder
            inputLayer = imageInputLayer(imageSize, "Normalization","none");
            ytrain = images;
            if activation == "tanh"
-               inputLayer = imageInputLayer(imageSize, "Normalization","rescale-symmetric");
-               %ytrain = rescale(ytrain,-1,1);
-           end
-           if activation == "tanh"
                activationLayer = tanhLayer;
            end
            % This part takes care of compatibility of 28x28 and 32x32
@@ -101,7 +98,7 @@ classdef CustomAutoencoder
                 'MiniBatchSize',128);
 
             % train the network, use input as desired output
-            net = trainNetwork(reshape(images, sz(1),sz(2),sz(3),[]), ...
+            net = trainNetwork(reshape(ytrain, sz(1),sz(2),sz(3),[]), ...
                     reshape(ytrain, sz(1),sz(2),sz(3),[]), ...
                     layers, ...
                     options);
@@ -114,6 +111,7 @@ classdef CustomAutoencoder
             obj.decoder = assembleNetwork( ...
                 [featureInputLayer(hiddenSize); ...
                 net.Layers(8:end)]);
+            obj.activation = activation;
         end
         
         % use only the encoder from the trained network

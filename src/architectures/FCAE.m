@@ -12,6 +12,7 @@ classdef FCAE
         encoderLayer % The number of the last layer of the encoder
         decoder % The last few layers of net, composing the decoder
         hiddenSize % The size of the bottleneck layer
+        activation
     end
     
     methods
@@ -42,6 +43,7 @@ classdef FCAE
             addParameter(p,"plots",defaultPlots, ...
                 @(x) any(validatestring(x,expectedPlots)))
             addParameter(p,"learnRate",defaultLearnRate);
+
     
             parse(p,images, hiddenSize,varargin{:});
 
@@ -57,11 +59,6 @@ classdef FCAE
            activationLayer = sigmoidLayer;
            inputLayer = imageInputLayer(imageSize, "Normalization","none");
            ytrain = images;
-           % remove this in next iteration
-           if activation == "tanh"
-               inputLayer = imageInputLayer(imageSize, "Normalization","rescale-symmetric");
-               %ytrain = rescale(ytrain,-1,1);
-           end
            if activation == "tanh"
                activationLayer = tanhLayer;
            end
@@ -97,7 +94,7 @@ classdef FCAE
                 'InitialLearnRate',learnRate, ...
                 'Verbose',false, ...
                 'Plots',plots,...
-                'MiniBatchSize',128);
+                'MiniBatchSize',32);
 
             % train the network, use input as desired output
             
@@ -114,6 +111,7 @@ classdef FCAE
             obj.decoder = assembleNetwork( ...
                 [imageInputLayer([1 1 hiddenSize], "Normalization","none"); ...
                 net.Layers(8:end)]);
+            obj.activation = activation;
         end
         
         % use only the encoder from the trained network
@@ -128,9 +126,6 @@ classdef FCAE
         function output = decode(obj, features)
             features = reshape(transpose(features), 1, 1,obj.hiddenSize,[]);
             output = obj.decoder.predict(features);
-            % if obj.net.Layers(end-1).Type == "tanh"
-            %     output = rescale(output);
-            % end
         end
 
         function [mmse, YTest] = test(obj,testImages, vis)

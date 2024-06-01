@@ -1,17 +1,18 @@
-for activation = ["sigmoid"]
-    for arch = ["CAE"]
+for activation = ["tanh"]
+    for arch = ["FCAE", "CAE"]
         settings.activation = activation;
         settings.learnRate = 1e-3;
         settings.doztr = true;
         settings.totalSteps = 30;
-        settings.runs = 10;
+        settings.runs = 1;
         settings.percentage = 10; %for validation
         settings.arch = arch;
+        settings.rescaleInput = false;
         
         %% MNIST
         settings.dataset = "MNIST";
         settings.savePath = "models/GMVLQ_" + arch + "_" + activation + ...
-            "_" + settings.dataset + ".mat";
+            "_" + settings.dataset + "rescale" + ".mat";
         settings.hiddenSize = 10;
         settings.numEpochs = 20;
         
@@ -22,7 +23,7 @@ for activation = ["sigmoid"]
         %% FashionMNIST
         settings.dataset = "FashionMNIST";
         settings.savePath = "models/GMVLQ_" + arch + "_" + activation + ...
-            "_" + settings.dataset + ".mat";        
+            "_" + settings.dataset + "rescale" + ".mat";     
         savepath = run_full(settings);
         disp("Model for FashionMNIST:" + ...
             savepath)

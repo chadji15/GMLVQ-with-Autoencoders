@@ -1,4 +1,4 @@
-function [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST()
+function [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(classes)
 %loadMNIST Reads the MNIST dataset from the .mat file and splits it into
 % training and test set. We keep the digits 0 and 1 at the time,
 % but this can become a parameter if need be.
@@ -6,7 +6,9 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST()
     load('mnist/mnist.mat');
     
     % Keep only the labels that interest us
-    classes = [0 1];
+    if ~exist("classes", "var")
+        classes = [0 1];
+    end
     
     idx = ismember(training.labels, classes);
     trainingImages = training.images(:,:,idx);

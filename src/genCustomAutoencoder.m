@@ -3,12 +3,13 @@ clear;
 addpath(genpath(pwd));
 %% Settings
 
-settings.hiddenSize = 256;
-settings.numEpochs = 100;
-settings.dataset = "CIFAR10";
-settings.savePath = "models/CAE_"+ settings.dataset + ".mat";
-settings.activation = "sigmoid";
+settings.hiddenSize = 10;
+settings.numEpochs = 20;
+settings.dataset = "MNIST";
+settings.activation = "tanh";
+settings.savePath = "models/CAE_tanh_rescale_MNIST.mat";
 settings.learnRate = 1e-3;
+settings.rescaleInput = true;
 %% Load the dataset
 [trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset);
 
