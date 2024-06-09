@@ -6,12 +6,13 @@ addpath(genpath(pwd));
 settings.hiddenSize = 10;
 settings.numEpochs = 20;
 settings.dataset = "MNIST";
-settings.activation = "tanh";
-settings.savePath = "models/CAE_tanh_rescale_MNIST.mat";
-settings.learnRate = 1e-3;
-settings.rescaleInput = true;
+settings.activation = "sigmoid";
+settings.savePath = "models/FCAE_tanh_MNIST.mat";
+settings.learnRate = 1e-3;  
+settings.rescaleInput = false;
+settings.classes = 0:2;
 %% Load the dataset
-[trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset);
+[trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(settings.classes);
 
 
 figure;
@@ -22,7 +23,7 @@ montage(thumbnails,'size',[20 50])
 
 %% Train autoencoder
 
-autoenc = CustomAutoencoder(trainingImages, ...
+autoenc = VAE(trainingImages, ...
     settings.hiddenSize, ...
     settings.numEpochs, ...
     "activation",settings.activation, ...
@@ -30,7 +31,7 @@ autoenc = CustomAutoencoder(trainingImages, ...
 
 %% Test set
 
-mse = autoenc.test(testImages)
+mse = autoenc.test(testImages(:,:,:,1:8))
 
 %% Generate new images
 autoenc.generateNew();

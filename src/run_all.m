@@ -1,5 +1,5 @@
-for activation = ["tanh"]
-    for arch = ["FCAE", "CAE"]
+for activation = ["tanh", "sigmoid"]
+    for arch = ["VAE"]
         settings.activation = activation;
         settings.learnRate = 1e-3;
         settings.doztr = true;
@@ -12,7 +12,7 @@ for activation = ["tanh"]
         %% MNIST
         settings.dataset = "MNIST";
         settings.savePath = "models/GMVLQ_" + arch + "_" + activation + ...
-            "_" + settings.dataset + "rescale" + ".mat";
+            "_" + settings.dataset + ".mat";
         settings.hiddenSize = 10;
         settings.numEpochs = 20;
         
@@ -23,7 +23,7 @@ for activation = ["tanh"]
         %% FashionMNIST
         settings.dataset = "FashionMNIST";
         settings.savePath = "models/GMVLQ_" + arch + "_" + activation + ...
-            "_" + settings.dataset + "rescale" + ".mat";     
+            "_" + settings.dataset  + ".mat";     
         savepath = run_full(settings);
         disp("Model for FashionMNIST:" + ...
             savepath)

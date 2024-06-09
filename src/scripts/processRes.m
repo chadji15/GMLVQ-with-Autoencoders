@@ -1,37 +1,32 @@
-clear autoenc;
-load(settings.modelPath);
-if ~exist('autoenc','var')
-    autoenc = mVAE;
-end
-
 %% Calculate accuracy
 
 disp("Accuracy")
 cmatrix = result.averageRun.validationPerf(end).confusionMatrix;
 accuracy = sum(diag(cmatrix)) / sum(cmatrix,"all")
 
+mrun = result.results(end).run;
 % decode the prototypes
-nPrototypes = size(result.averageRun.prototypes,1);
-prototypes = result.averageRun.prototypes;
+nPrototypes = size(mrun.prototypes,1);
+prototypes = mrun.prototypes;
 
 if settings.doztr
     % revert the zscore transfor mation that takes place in the toolbox
-    prototypes = result.averageRun.prototypes .* repmat(result.averageRun.stdFeatures,nPrototypes,1)...
-        + repmat(result.averageRun.meanFeatures, nPrototypes, 1);
+    prototypes = mrun.prototypes .* repmat(mrun.stdFeatures,nPrototypes,1)...
+        + repmat(mrun.meanFeatures, nPrototypes, 1);
     
 end
 
 
 classes = keys(lt.labelMap);
 origPrototypes = autoenc.decode(prototypes);
-for i = 1:length(classes)
-    subplot(1,length(classes),i);
+for i = 1:length(classes) %* settings.prototypesPerClass
+    subplot(settings.prototypesPerClass,length(classes),i);
     imshow(squeeze(origPrototypes(:,:,:,i)));
 end
 
 %% Plot eigenvectors
-rel = result.averageRun.lambda;
-Z = diag(result.averageRun.stdFeatures);
+rel = mrun.lambda;
+Z = diag(mrun.stdFeatures);
 rel_inv = Z;
 if settings.doztr
 rel_inv = Z.' * rel * Z;
@@ -42,13 +37,13 @@ end
 % primEig = V(:,idx);
 % primEigIm = autoenc.decode(transpose(primEig));
 % subplot(1,2,1);
-% imshow(primEigIm);
-% 
+% imshow(primEigIm,[]);
+
 % primEig = V(:,end-idx);
 % primEigIm = autoenc.decode(transpose(primEig));
 % subplot(1,2,2);
 % imshow(primEigIm);
-
+% 
 num = 10;
 figure;
 for i=1:num

@@ -3,26 +3,26 @@ clear;
 
 %% Settings
 
-model = "CAE_CIFAR10.mat";
+model = "VAE_sigmoid_MNIST.mat";
 settings.modelPath = "models/" + model;
+settings.classes = 0:1;
 load(settings.modelPath);
-settings.dataset = "CIFAR10";
+settings.dataset = "MNIST";
 settings.doztr = true;
-settings.totalSteps = 30;
+settings.totalSteps = 10;
 settings.runs = 1;
 settings.percentage = 10; %for validation
-settings.savePath = "models/GMLVQ_10Prot_" + model;
-settings.prototypesPerClass = 10;
-%%
+settings.savePath = "models/GMLVQ_VAE_sigmoid_MNIST.mat";
+settings.prototypesPerClass = 2;
+settings.modelPath = "models/" + model;
 
-if ~exist('autoenc','var')
-    autoenc = mVAE;
-end
+
+%%
 
 if settings.dataset == "FashionMNIST"
 [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST();
 elseif settings.dataset == "MNIST"
-[trainingImages, trainingLabels, testImages, testLabels] = loadMNIST();
+[trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(settings.classes);
 elseif settings.dataset == "CIFAR10"
 [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR();
 elseif settings.dataset == "CIFAR10BW"
@@ -34,9 +34,7 @@ end
 %%
 % encode the training data
 xencoded = autoenc.encode(trainingImages);
-if size(xencoded,1) < size(xencoded, 2)
-    xencoded = transpose(xencoded);
-end
+
 
 % convert the labels to the range 1-N
 lt = LabelTransformer(unique(trainingLabels));
@@ -45,7 +43,7 @@ transformedLabels = lt.transform(trainingLabels);
 % train the gmlvq model
 gmlvq = GMLVQ.GMLVQ(xencoded, transformedLabels, ...
     GMLVQ.Parameters("doztr", settings.doztr), settings.totalSteps, ...
-    [ones(1,settings.prototypesPerClass) ones(1,settings.prototypesPerClass)*2] );
+    [repmat(1,1,settings.prototypesPerClass), repmat(2,1,settings.prototypesPerClass)]);
 
 result = gmlvq.runValidation(settings.runs,settings.percentage);
 
@@ -70,4 +68,4 @@ end
 
 %% Save 
 
-save(settings.savePath, "result", "gmlvq", "prototypes", "lt", "settings")
+save(settings.savePath, "result", "gmlvq", "prototypes", "lt", "settings", "autoenc")

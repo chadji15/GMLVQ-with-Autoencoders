@@ -1,8 +1,6 @@
 %% After loading GMLVQ + Autoenc model
 load(settings.modelPath);
-if ~exist('autoenc','var')
-    autoenc = mVAE;
-end
+
 
 if settings.dataset == "FashionMNIST"
 [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST();
