@@ -1,4 +1,4 @@
-function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(bw)
+function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(classes,bw)
 %loadCIFAR Load the CIFAR10 dataset from the .mat files and splits it into
 % training and test sets. For now we keep the classes "horse" and "ship". 
 % If the parameter "bw" is true, the images are turned into grayscale
@@ -10,7 +10,9 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(bw
     [trainingImages,trainingLabels,testImages,testLabels] = helperCIFAR10Data.load('.\data');
     % Select two classes
     
-    classes = categorical(["horse", "ship"]);
+    if ~exist("classes", "var") || all(classes == "default")
+        classes = categorical(["horse", "ship"]);
+    end
     
     trainIdx = find(ismember(trainingLabels, classes));
     trainingImages = trainingImages(:,:,:,trainIdx);

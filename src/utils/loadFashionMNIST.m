@@ -1,4 +1,4 @@
-function [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST()
+function [trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST(classes)
 %loadFashionMNIST Loads the FashionMNIST dataset from the binary files and
 % splits it into training and test set. For now we keep the classes "Bag"
 % and "Trouser" but this can become a parameter if need be.
@@ -14,7 +14,9 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadFashionM
     YTest = string(YTest);
     
     % Keep only the labels that interest us
-    classes = ["Bag", "Trouser"];
+    if ~exist("classes", "var") || all(classes == "default")
+        classes = ["Bag", "Trouser"];
+    end
     
     idx = ismember(YTrain, classes);
     trainingImages = XTrain(:,:,:,idx);

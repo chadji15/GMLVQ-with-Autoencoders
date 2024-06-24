@@ -9,7 +9,7 @@ elseif settings.dataset == "MNIST"
 elseif settings.dataset == "CIFAR10"
 [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR();
 elseif settings.dataset == "CIFAR10BW"
-[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(true);
+[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(["horse", "ship"],true);
 else
 return
 end

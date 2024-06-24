@@ -1,8 +1,8 @@
-% clc;
-% clear;
+clc;
+clear;
 
 %% load the model
-% load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST_5prot.mat')
+load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST_3.mat')
 
 
 %%
@@ -10,7 +10,7 @@
 numClasses = 10;
 numEig = 9;
 % reverse z-score transformation from relevance matrix
- 
+
 
 run = result.results(end).run;
 Z = diag(run.stdFeatures);
@@ -26,6 +26,8 @@ end
 Ds =  D(ind);
 Vs = V(:,ind);
 
+clear primEigIm;
+clear u;
 % pass all eigenvectors through the decoder
 for i=1:numEig
     primEigIm(:,:,i) = autoenc.decode(Vs(:,i)');

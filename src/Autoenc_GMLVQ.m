@@ -3,17 +3,17 @@ clear;
 
 %% Settings
 
-model = "VAE_sigmoid_MNIST.mat";
+model = "VAE_sigmoid_CIFAR10.mat";
 settings.modelPath = "models/" + model;
-settings.classes = 0:1;
+% settings.classes = 0:1;
 load(settings.modelPath);
-settings.dataset = "MNIST";
+settings.dataset = "CIFAR10";
 settings.doztr = true;
-settings.totalSteps = 10;
-settings.runs = 1;
+settings.totalSteps = 30;
+settings.runs = 10;
 settings.percentage = 10; %for validation
-settings.savePath = "models/GMLVQ_VAE_sigmoid_MNIST.mat";
-settings.prototypesPerClass = 2;
+settings.savePath = "models/GMLVQ_VAE_sigmoid_CIFAR10.mat";
+settings.prototypesPerClass = 1;
 settings.modelPath = "models/" + model;
 
 
@@ -26,7 +26,7 @@ elseif settings.dataset == "MNIST"
 elseif settings.dataset == "CIFAR10"
 [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR();
 elseif settings.dataset == "CIFAR10BW"
-[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(true);
+[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(["horse", "ship"], true);
 else
 return
 end
@@ -68,4 +68,4 @@ end
 
 %% Save 
 
-save(settings.savePath, "result", "gmlvq", "prototypes", "lt", "settings", "autoenc")
+save(settings.savePath, "result", "gmlvq", "lt", "settings", "autoenc")

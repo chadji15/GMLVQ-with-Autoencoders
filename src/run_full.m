@@ -1,6 +1,6 @@
 function savepath = run_full(settings)
 
-[trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset);
+[trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset, settings.classes);
 
 if settings.rescaleInput
     trainingImages = rescale(trainingImages,-1,1);
@@ -35,18 +35,7 @@ transformedLabels = lt.transform(trainingLabels);
 gmlvq = GMLVQ.GMLVQ(xencoded, transformedLabels,GMLVQ.Parameters("doztr", settings.doztr), settings.totalSteps);
 
 result = gmlvq.runValidation(settings.runs,settings.percentage);
-% decode the prototypes
-nPrototypes = size(result.averageRun.prototypes,1);
-prototypes = result.averageRun.prototypes;
 
-if settings.doztr
-    % revert the zscore transfor mation that takes place in the toolbox
-    prototypes = result.averageRun.prototypes .* repmat(result.averageRun.stdFeatures,nPrototypes,1)...
-        + repmat(result.averageRun.meanFeatures, nPrototypes, 1);
-    
-end
-
-
-save(settings.savePath, "autoenc", "result", "gmlvq", "prototypes", "lt", "settings")
+save(settings.savePath, "autoenc", "result", "gmlvq", "lt", "settings")
 savepath = settings.savePath;
 end

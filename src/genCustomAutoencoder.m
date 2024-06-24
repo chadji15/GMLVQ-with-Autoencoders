@@ -3,16 +3,19 @@ clear;
 addpath(genpath(pwd));
 %% Settings
 
-settings.hiddenSize = 10;
-settings.numEpochs = 20;
-settings.dataset = "MNIST";
+settings.hiddenSize = 128;
+settings.numEpochs = 30;
+settings.dataset = "CIFAR10";
 settings.activation = "sigmoid";
-settings.savePath = "models/FCAE_tanh_MNIST.mat";
+settings.savePath = "models/VAE_sigmoid_CIFAR10.mat";
 settings.learnRate = 1e-3;  
 settings.rescaleInput = false;
-settings.classes = 0:2;
+settings.classes = ["airplane", "automobile", "bird", "cat", ...
+            "deer", "dog", "frog", "horse", "ship", "truck"];
+% settings.classes = 0:1;
 %% Load the dataset
-[trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(settings.classes);
+[trainingImages, trainingLabels, testImages, testLabels] = ...
+    loadDataset(settings.dataset, settings.classes);
 
 
 figure;
@@ -31,7 +34,7 @@ autoenc = VAE(trainingImages, ...
 
 %% Test set
 
-mse = autoenc.test(testImages(:,:,:,1:8))
+mse = autoenc.test(testImages)
 
 %% Generate new images
 autoenc.generateNew();
