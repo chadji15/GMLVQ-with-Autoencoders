@@ -6,7 +6,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(cl
     load('mnist/mnist.mat');
     
     % Keep only the labels that interest us
-    if ~exist("classes", "var") || all(classes == "default")
+    if ~exist("classes", "var") || (isstring(classes) && classes == "default")
         classes = [0 1];
     end
     

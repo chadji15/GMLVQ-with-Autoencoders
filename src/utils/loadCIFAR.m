@@ -10,7 +10,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(cl
     [trainingImages,trainingLabels,testImages,testLabels] = helperCIFAR10Data.load('.\data');
     % Select two classes
     
-    if ~exist("classes", "var") || all(classes == "default")
+    if ~exist("classes", "var") || (isstring(classes) && classes == "default")
         classes = categorical(["horse", "ship"]);
     end
     
