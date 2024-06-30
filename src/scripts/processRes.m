@@ -19,8 +19,9 @@ end
 
 classes = keys(lt.labelMap);
 origPrototypes = autoenc.decode(prototypes);
+
 for i = 1:length(classes) %* settings.prototypesPerClass
-    subplot(settings.prototypesPerClass,length(classes),i);
+    nexttile;
     imshow(squeeze(origPrototypes(:,:,:,i)));
 end
 
@@ -29,28 +30,30 @@ rel = mrun.lambda;
 Z = diag(mrun.stdFeatures);
 rel_inv = Z;
 if settings.doztr
-rel_inv = Z.' * rel * Z;
+    rel_inv = Z.' * rel * Z;
 end
 [V, D] = eig(rel_inv,'vector');
+D = real(D);
+V = real(V);
 
-% [m,idx] = max(D);
-% primEig = V(:,idx);
-% primEigIm = autoenc.decode(transpose(primEig));
-% subplot(1,2,1);
-% imshow(primEigIm,[]);
+[m,idx] = max(D);
+primEig = V(:,idx);
+primEigIm = autoenc.decode(transpose(primEig));
+%subplot(1,2,1);
+imshow(primEigIm, []);
 
 % primEig = V(:,end-idx);
 % primEigIm = autoenc.decode(transpose(primEig));
 % subplot(1,2,2);
 % imshow(primEigIm);
 % 
-num = 10;
-figure;
-for i=1:num
-    dec = autoenc.decode(transpose(V(:,i)));
-    %im = rescale(dec);
-    im=dec;
-    subplot(2,5,i);
-    imshow(im,[]);
-end
-
+% num = 10;
+% figure;
+% for i=1:num
+%     dec = autoenc.decode(transpose(V(:,i)));
+%     %im = rescale(dec);
+%     im=dec;
+%     subplot(2,5,i);
+%     imshow(im,[]);
+% end
+% 

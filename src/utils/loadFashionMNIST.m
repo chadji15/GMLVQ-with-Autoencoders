@@ -14,7 +14,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadFashionM
     YTest = string(YTest);
     
     % Keep only the labels that interest us
-    if ~exist("classes", "var") || (isstring(classes) && classes == "default")
+    if ~exist("classes", "var") || (isstring(classes) && all(classes == "default"))
         classes = ["Bag", "Trouser"];
     end
     

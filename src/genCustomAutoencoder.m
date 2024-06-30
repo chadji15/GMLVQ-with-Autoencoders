@@ -3,15 +3,15 @@ clear;
 addpath(genpath(pwd));
 %% Settings
 
-settings.hiddenSize = 128;
+settings.hiddenSize = 32;
 settings.numEpochs = 30;
-settings.dataset = "CIFAR10";
-settings.activation = "sigmoid";
-settings.savePath = "models/VAE_sigmoid_CIFAR10.mat";
+settings.dataset = "FashionMNIST";
+settings.activation = "tanh";
+settings.savePath = "models/FCAE_tanh_FashionMNIST10.mat";
 settings.learnRate = 1e-3;  
 settings.rescaleInput = false;
-settings.classes = ["airplane", "automobile", "bird", "cat", ...
-            "deer", "dog", "frog", "horse", "ship", "truck"];
+settings.classes = ["T-shirt/top", "Trouser", "Pullover", ...
+            "Dress", "Coat","Sandal", "Shirt","Sneaker", "Bag", "Ankle boot"];
 % settings.classes = 0:1;
 %% Load the dataset
 [trainingImages, trainingLabels, testImages, testLabels] = ...
@@ -26,7 +26,7 @@ montage(thumbnails,'size',[20 50])
 
 %% Train autoencoder
 
-autoenc = VAE(trainingImages, ...
+autoenc = FCAE(trainingImages, ...
     settings.hiddenSize, ...
     settings.numEpochs, ...
     "activation",settings.activation, ...
