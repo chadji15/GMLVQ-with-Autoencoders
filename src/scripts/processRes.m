@@ -20,9 +20,10 @@ end
 classes = keys(lt.labelMap);
 origPrototypes = autoenc.decode(prototypes);
 
+% tiledlayout(10,2);
 for i = 1:length(classes) %* settings.prototypesPerClass
-    nexttile;
-    imshow(squeeze(origPrototypes(:,:,:,i)));
+    nexttile(10+i);
+    imshow(squeeze(origPrototypes(:,:,:,i)), [0 1]);
 end
 
 %% Plot eigenvectors
@@ -36,24 +37,24 @@ end
 D = real(D);
 V = real(V);
 
-[m,idx] = max(D);
-primEig = V(:,idx);
-primEigIm = autoenc.decode(transpose(primEig));
-%subplot(1,2,1);
-imshow(primEigIm, []);
+% [m,idx] = max(D);
+% primEig = V(:,idx);
+% primEigIm = autoenc.decode(transpose(primEig));
+% %subplot(1,2,1);
+% imshow(primEigIm, []);
 
 % primEig = V(:,end-idx);
 % primEigIm = autoenc.decode(transpose(primEig));
 % subplot(1,2,2);
 % imshow(primEigIm);
 % 
-% num = 10;
-% figure;
-% for i=1:num
-%     dec = autoenc.decode(transpose(V(:,i)));
-%     %im = rescale(dec);
-%     im=dec;
-%     subplot(2,5,i);
-%     imshow(im,[]);
-% end
-% 
+num = 10;
+figure;
+for i=1:num
+    dec = autoenc.decode(transpose(V(:,i)));
+    %im = rescale(dec);
+    im=dec;
+    subplot(2,5,i);
+    imshow(im,[0 1]);
+end
+

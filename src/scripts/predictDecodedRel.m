@@ -2,7 +2,7 @@ clc;
 clear;
 
 %% load the model
-load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMVLQ_FCAE_tanh_MNIST.mat')
+load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST_10runs.mat')
 
 %%
 % reverse z-score transformation from relevance matrix
@@ -12,11 +12,13 @@ Z = diag(run.stdFeatures);
 rel = run.lambda;
 if settings.doztr
     rel = Z.' * rel * Z;
-    rel = round(rel,4);
+    %rel = round(rel,4);
 end
 
 % find leading eigenvalue and eigenvector
 [V, D] = eig(rel, 'vector');
+V = real(V);
+D = real(D);
 
 [m,idx] = max(D);
 primEig = V(:,idx)';

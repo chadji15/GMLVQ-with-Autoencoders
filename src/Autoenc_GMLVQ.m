@@ -3,16 +3,16 @@ clear;
 
 %% Settings
 
-model = "FCAE_tanh_FashionMNIST10.mat";
+model = "CAE_sigmoid_FashionMNIST10.mat";
 modelPath = "models/" + model;
 % settings.classes = 0:1;
 load(modelPath);
-settings.dataset = "FashionMNIST";
+settings.dataset = "MNIST";
 settings.doztr = true;
 settings.totalSteps = 30;
 settings.runs = 10;
 settings.percentage = 10; %for validation
-settings.savePath = "models/GMLVQ_FCAE_tanh_FashionMNIST10.mat";
+settings.savePath = "models/GMLVQ_CAE_sigmoid_FashionMNIST10.mat";
 settings.prototypesPerClass = 1;
 settings.modelPath = "models/" + model;
 
@@ -24,7 +24,7 @@ if settings.dataset == "FashionMNIST"
 elseif settings.dataset == "MNIST"
 [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(settings.classes);
 elseif settings.dataset == "CIFAR10"
-[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR();
+[trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(settings.classes);
 elseif settings.dataset == "CIFAR10BW"
 [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(["horse", "ship"], true);
 else

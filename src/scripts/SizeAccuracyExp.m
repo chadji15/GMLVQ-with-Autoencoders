@@ -1,15 +1,18 @@
-%% Load the dataset
-
-[trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST();
-
 %% Settings
 
 settings.doztr = true;
 settings.totalSteps = 30;
-settings.runs = 10;
+settings.runs = 1;
 settings.percentage = 10; %for validation
 settings.activation = "tanh";
+settings.epochs =  50;
+settings.classes =  ["T-shirt/top", "Trouser", "Pullover", ...
+            "Dress", "Coat","Sandal", "Shirt","Sneaker", "Bag", "Ankle boot"];
 
+
+%% Load the dataset
+
+[trainingImages, trainingLabels, testImages, testLabels] = loadFashionMNIST(settings.classes);
 %% Train autoencoder
 
 origPrototypes = [];
@@ -19,7 +22,7 @@ primEigIm = [];
 mse = [];
 
 for hiddenSize=5:125
-    autoenc = FCAE(trainingImages,hiddenSize,50, ...
+    autoenc = FCAE(trainingImages,hiddenSize,settings.epochs, ...
         'activation',settings.activation, ...
         "plots", "none");
 
@@ -76,4 +79,4 @@ res.mse = mse;
 res.origPrototypes = origPrototypes;
 
 %% Save
-save("SizeAccuracyExpRes.mat", "res", "settings");
+save("SizeAccuracyExpRes10class.mat", "res", "settings");

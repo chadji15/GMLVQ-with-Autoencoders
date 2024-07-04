@@ -2,7 +2,7 @@ clc;
 clear;
 
 %% load the model
-load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST_3.mat')
+load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST_10runs.mat')
 
 
 %%
@@ -17,11 +17,13 @@ Z = diag(run.stdFeatures);
 rel = run.lambda;
 if settings.doztr
     rel = Z.' * rel * Z;
-    rel = round(rel,4);
+    %rel = round(rel,4);
 end
 
 % find eigenvectors and sort
 [V, D] = eig(rel, 'vector');
+V = real(V);
+D = real(D);
 [d,ind] = sort(D, "descend");
 Ds =  D(ind);
 Vs = V(:,ind);
