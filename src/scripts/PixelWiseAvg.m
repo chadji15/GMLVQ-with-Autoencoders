@@ -1,3 +1,4 @@
+% Auxiliary script to compare prototypes with pixel-wise average images.
 %% After loading GMLVQ + Autoenc model
 %load(settings.modelPath);
 

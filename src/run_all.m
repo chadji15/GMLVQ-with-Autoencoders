@@ -1,3 +1,7 @@
+% Custom auxiliary script for running multiple experiments with different
+% configurations sequentially. I used this to automate running experiments
+% on the Habrok cluster.
+
 for activation = ["sigmoid"]
     for arch = ["CAE", "FCAE", "VAE"]
         settings.activation = activation;

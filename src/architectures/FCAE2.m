@@ -1,5 +1,15 @@
 classdef FCAE2
     %FCAE A class for containing a Fully Convolutional Autoencoder.
+    % This second version of the architecture is written for a single
+    % purpose: to utilize the minibatchpredict function. This function
+    % allows us to split a batch into minibatches before doing inference,
+    % which is useful in the case where the model was trained on a machine
+    % that has more memory or a better graphics card than our machine and
+    % thus can handle less data at the same time. This function was
+    % introduced in MATLAB 2024a, whereas Habrok has the 2022a version, so
+    % both version of the architectures are kept in the repository. To use
+    % it on a model trained on Habrok (or any cluster), a manual conversion
+    % from FCAE to FCAE2 must take place.
     % A fully convolutional autoencoder does not include any fully
     % connected layer. The architecture for this specific implementation:
     % Encoder: 6 convolution layers, 3 of which downsize

@@ -1,3 +1,6 @@
+% This script runs the experiment where we compare the performance of the
+% classifiers that are based on autoencoders with different hidden sizes.
+
 %% Settings
 
 settings.doztr = true;
@@ -21,11 +24,16 @@ auroc = [];
 primEigIm = [];
 mse = [];
 
+% Loop over all the hidden sizes we want to test.
+% For large datasets its best to use a step size larger than 1.
 for hiddenSize=5:125
+    % Train the autoencoder
+    % Can be replaced with any of the other two architectures.
     autoenc = FCAE(trainingImages,hiddenSize,settings.epochs, ...
         'activation',settings.activation, ...
         "plots", "none");
 
+    % Calculate MSE on test set.
     mse(hiddenSize) = autoenc.test(testImages,false);
 
     % encode the training data
@@ -43,7 +51,7 @@ for hiddenSize=5:125
     
     result = gmlvq.runValidation(settings.runs,settings.percentage);
 
-        % decode the prototypes
+    % decode the prototypes
     nPrototypes = size(result.averageRun.prototypes,1);
     prototypes = result.averageRun.prototypes;
 
@@ -56,10 +64,14 @@ for hiddenSize=5:125
     
     
     classes = keys(lt.labelMap);
+    % Save the prototypes
     origPrototypes(:,:,:,:,hiddenSize) = autoenc.decode(prototypes);
     cmatrix = result.averageRun.validationPerf(end).confusionMatrix;
+    % Save accuracy on validation set
     accuracy(hiddenSize) = sum(diag(cmatrix)) / sum(cmatrix,"all");
+    % Save auroc on validation set
     auroc(hiddenSize) = result.averageRun.validationPerf(end).auroc;
+    % Decode the eigenvectors of the relevance matrix and save them
     rel = result.averageRun.lambda;
     Z = diag(result.averageRun.stdFeatures);
     rel_inv = Z;

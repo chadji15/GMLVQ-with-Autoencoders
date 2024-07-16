@@ -1,6 +1,7 @@
 function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(classes,bw)
 %loadCIFAR Load the CIFAR10 dataset from the .mat files and splits it into
-% training and test sets. For now we keep the classes "horse" and "ship". 
+% training and test sets. The classes parameter is an array of strings that
+% contains the classes we should keep in the dataset.
 % If the parameter "bw" is true, the images are turned into grayscale
 % before returning them.
 % 
@@ -8,7 +9,7 @@ function [trainingImages, trainingLabels, testImages, testLabels] = loadCIFAR(cl
         bw = false;
     end
     [trainingImages,trainingLabels,testImages,testLabels] = helperCIFAR10Data.load('.\data');
-    % Select two classes
+    % Select the classes that interest us.
     
     if ~exist("classes", "var") || (isstring(classes) && all(classes == "default"))
         classes = ["horse", "ship"];

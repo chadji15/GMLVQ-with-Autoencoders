@@ -1,3 +1,9 @@
+% Custom script to run the full pipeline of training the autoencoder and
+% GMLVQ for a multi-class classification task. The logic is similar to
+% run_full.m, genCustomAutoencoder.m and Autoenc_GMLVQ.m.
+% Generally can be ignored, not necessary to understand the rest of the
+% project.
+
 settings.activation = "tanh";
 settings.learnRate = 1e-3;
 settings.doztr = true;

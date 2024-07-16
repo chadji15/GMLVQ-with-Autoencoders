@@ -1,3 +1,5 @@
+% Variant of the run_all.m script, specifically set up for 10-class
+% experiments. I used this to automate the experiments on Habrok.
 for activation = ["sigmoid"]
     for arch = ["CAE", "FCAE", "VAE"]
         settings.activation = activation;

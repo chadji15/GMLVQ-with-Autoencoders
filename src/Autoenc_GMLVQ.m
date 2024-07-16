@@ -1,14 +1,19 @@
+% Train GMLVQ on the latent space using an autoencoder that is already
+% trained
 clc;
 clear;
 
 %% Settings
 
+% This is the path of the trained autoencoder
 model = "CAE_sigmoid_FashionMNIST10.mat";
 modelPath = "models/" + model;
 % settings.classes = 0:1;
 load(modelPath);
 settings.dataset = "MNIST";
+% This is true if z-score transformation should be used
 settings.doztr = true;
+% Total GMLVQ stepts
 settings.totalSteps = 30;
 settings.runs = 10;
 settings.percentage = 10; %for validation
@@ -45,6 +50,8 @@ gmlvq = GMLVQ.GMLVQ(xencoded, transformedLabels, ...
     GMLVQ.Parameters("doztr", settings.doztr), settings.totalSteps, 1:10);
 result = gmlvq.runValidation(settings.runs,settings.percentage);
 
+% The following section decodes and visualizes the prototypes
+% Uncomment to execute
 % decode the prototypes
 % nPrototypes = size(result.averageRun.prototypes,1);
 % prototypes = result.averageRun.prototypes;

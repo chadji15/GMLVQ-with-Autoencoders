@@ -1,7 +1,12 @@
+% This script trains and saves an autoencoder.
+
 clc;
 clear;
 addpath(genpath(pwd));
 %% Settings
+% Here the configuration is defined. Many of the hyper-parameters are
+% tunable, such as the hidden size, the learning rate and the activation
+% function.
 
 settings.hiddenSize = 10;
 settings.numEpochs = 20;
@@ -24,7 +29,11 @@ settings.classes = ["horse", "ship"];
 % montage(thumbnails,'size',[20 50])
 
 %% Train autoencoder
-
+% FCAE for the fully convolutional autoencoder
+% CustomAutoencoder for the custom convolutional autoencoder
+% VAE for the variational autoencoder
+% All three are initialized in a very similar way
+% More details in their definitions in the "architectures" directory
 autoenc = FCAE(trainingImages, ...
     settings.hiddenSize, ...
     settings.numEpochs, ...
@@ -35,7 +44,7 @@ autoenc = FCAE(trainingImages, ...
 
 mse = autoenc.test(testImages)
 
-%% Generate new images
+%% Generate new images from noise
 autoenc.generateNew();
 
 %% Save

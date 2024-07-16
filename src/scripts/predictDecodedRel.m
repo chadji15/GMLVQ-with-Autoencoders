@@ -1,3 +1,6 @@
+% Custom auxiliary script. Can be ignored. predDecodedRel10Classes.m is an
+% improved version of this and more adaptable.
+
 clc;
 clear;
 

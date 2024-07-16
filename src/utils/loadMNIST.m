@@ -1,7 +1,7 @@
 function [trainingImages, trainingLabels, testImages, testLabels] = loadMNIST(classes)
 %loadMNIST Reads the MNIST dataset from the .mat file and splits it into
-% training and test set. We keep the digits 0 and 1 at the time,
-% but this can become a parameter if need be.
+% training and test set. The classes parameter is an array that contains
+% the digits that should be kept in the dataset. Default is 0 and 1.
     % Load the mnist dataset
     load('mnist/mnist.mat');
     

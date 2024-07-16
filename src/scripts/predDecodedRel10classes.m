@@ -1,3 +1,7 @@
+% This script can be used to decode the relevance matrix from GMLVQ, use it
+% to make predictions and calculate this predictor's accuracy and agreement
+% with the "teacher" predictor.
+
 clc;
 clear;
 
@@ -7,23 +11,25 @@ load('C:\Users\xrist\Desktop\Uni\master\Thesis\code\models\GMLVQ_FCAE_tanh_MNIST
 
 %%
 %numClasses = length(settings.classes);
+% How many classes we need to distinguish between.
 numClasses = 10;
+% how many eigenvectors to use to reconstruct the relevance matrix
 numEig = 9;
 % reverse z-score transformation from relevance matrix
-
-
 run = result.results(end).run;
 Z = diag(run.stdFeatures);
 rel = run.lambda;
 if settings.doztr
     rel = Z.' * rel * Z;
-    %rel = round(rel,4);
 end
 
 % find eigenvectors and sort
 [V, D] = eig(rel, 'vector');
+% keep only the real parts of the results. The real parts are negligible in
+% every observed case.
 V = real(V);
 D = real(D);
+% Sore eigenvectors by their corresponding eigenvalues.
 [d,ind] = sort(D, "descend");
 Ds =  D(ind);
 Vs = V(:,ind);
@@ -77,20 +83,25 @@ encodedFeatures = (xencoded - repmat(run.meanFeatures, nFeatureVectors, 1)) ...
 lt = LabelTransformer(unique(testLabels));
 transformedLabels = lt.transform(testLabels);
 
+% initialize vectors for predictions
 predEncoded = zeros(nFeatureVectors,1);
 predDecoded = zeros(nFeatureVectors,1);
 %%
 for i=1:nFeatureVectors
     % classify in encoded space
     dist = [];
+    % calculate the distance of the data point to all prototypes
     for j=1:size(run.prototypes,1)
         dist(j) = GMLVQ_distance(run.lambda,  encodedFeatures(i,:), run.prototypes(j,:));
     end
-        
+    
+    % find the minimum distance 
     [~,idx] = min(dist);
+    % assign the class of the prototype with the minimum distance
     predEncoded(i) = run.gmlvq.plbl(idx);
 
     % classify in decoded space
+    % same as above but in original feature space
     distDec = [];
     trainingVector = reshape(testImages(:,:,:,i),1, []);
     for j=1:size(run.prototypes,1)
@@ -100,7 +111,7 @@ for i=1:nFeatureVectors
     predDecoded(i) = run.gmlvq.plbl(idx);
     
 end
-%%
+%% Calculate accuracies and agreement.
 encodedAcc = sum(predEncoded == transformedLabels) ...
     / nFeatureVectors
 

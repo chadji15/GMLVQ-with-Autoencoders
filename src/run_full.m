@@ -1,3 +1,6 @@
+% This is a custom auxiliary script to run the whole pipeline of experiment
+% based on a settings struct. Mostly used to automate experiments.
+
 function savepath = run_full(settings)
 
 [trainingImages, trainingLabels, testImages, testLabels] = loadDataset(settings.dataset, settings.classes);

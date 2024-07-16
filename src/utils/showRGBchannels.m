@@ -1,4 +1,7 @@
 function [outputArg1,outputArg2] = showRGBchannels(img)
+% showRGBchannels
+% Utility function to display the three channels of an RGB image
+% separately.
 rgbImage = img;
 % Extract color channels.
 redChannel = rgbImage(:,:,1); % Red channel
